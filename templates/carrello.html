@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello – Barber Shop</title>
+    <link rel="stylesheet" href="../static/css/capelli.css">
+
+    <style>
+        .cart-container {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-controls button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #fff;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .remove-btn {
+            background: #b00020;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            text-align: right;
+            margin-top: 30px;
+            font-size: 1.3rem;
+        }
+
+        .checkout-btn {
+            margin-top: 20px;
+            float: right;
+            padding: 12px 20px;
+            background: #fff;
+            color: #000;
+            border: none;
+            cursor: pointer;
+        }
+
+        .empty-cart {
+            text-align: center;
+            margin-top: 80px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        /* badge contatore carrello */
+        .cart-count {
+            background: red;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 12px;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        /* form spedizione nascosto all'inizio */
+        #shipping-form {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        #shipping-form label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #shipping-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">Urban BARBER<span>SHOP</span></div>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('capelli') }}">Shop</a>
+            <a href="#">Contattaci</a>
+            <div class="cart-icon">
+                <img src="https://via.placeholder.com/24" alt="Carrello">
+                <span class="cart-count"></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CARRELLO -->
+    <main class="cart-container">
+        <h1>Il tuo carrello</h1>
+
+        <div id="cart-items"></div>
+
+        <div class="cart-total" id="cart-total"></div>
+
+        <!-- pulsante iniziale -->
+        <button id="checkout-button" class="checkout-btn">Paga</button>
+
+        <!-- form spedizione -->
+        <div id="shipping-form">
+            <h3>Indirizzo di spedizione</h3>
+            <label for="customer-name">Nome completo:</label>
+            <input type="text" id="customer-name" placeholder="Mario Rossi" required>
+
+            <label for="customer-email">Email:</label>
+            <input type="email" id="customer-email" placeholder="mario@email.com" required>
+
+            <label for="customer-address">Indirizzo:</label>
+            <input type="text" id="customer-address" placeholder="Via Roma 1" required>
+
+            <label for="customer-city">Città:</label>
+            <input type="text" id="customer-city" placeholder="Milano" required>
+
+            <label for="customer-zip">CAP:</label>
+            <input type="text" id="customer-zip" placeholder="20100" required>
+
+            <button id="confirm-checkout" class="checkout-btn">Procedi al pagamento</button>
+        </div>
+
+        <script src="https://js.stripe.com/v3/"></script>
+    </main>
+
+    <!-- SCRIPT CARRELLO -->
+    <script>
+        // legge il carrello dal server
+        async function getCart() {
+            const res = await fetch("/api/cart", { credentials: "same-origin" });
+            return await res.json();
+        }
+
+        // modifica quantità
+        async function changeQuantity(id, delta) {
+            await fetch("/api/cart/update", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({ id, delta })
+            });
+            await renderCart();
+        }
+
+        // rimuove prodotto
+        async function removeItem(id) {
+            await fetch("/api/cart/remove", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "same-origin",
+                body: JSON.stringify({ id })
+            });
+            await renderCart();
+        }
+
+        // renderizza carrello
+        async function renderCart() {
+            const cart = await getCart();
+            const container = document.getElementById("cart-items");
+            const totalBox = document.getElementById("cart-total");
+            const checkoutBtn = document.getElementById("checkout-button");
+
+            container.innerHTML = "";
+            totalBox.innerHTML = "";
+
+            if (!cart || cart.length === 0) {
+                container.innerHTML = '<div class="empty-cart">Il carrello è vuoto</div>';
+                checkoutBtn.style.display = "none";
+                updateCartHeader(cart);
+                return;
+            }
+
+            checkoutBtn.style.display = "block";
+
+            let total = 0;
+            cart.forEach(item => {
+                const subtotal = item.price * item.quantity;
+                total += subtotal;
+
+                const row = document.createElement("div");
+                row.className = "cart-item";
+
+                row.innerHTML = `
+                <h4>${item.name}</h4>
+                <div>€${item.price.toFixed(2)}</div>
+                <div class="qty-controls">
+                    <button onclick="changeQuantity('${item.id}', -1)">−</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="changeQuantity('${item.id}', 1)">+</button>
+                </div>
+                <div>€${subtotal.toFixed(2)}</div>
+                <button class="remove-btn" onclick="removeItem('${item.id}')">✕</button>
+            `;
+                container.appendChild(row);
+            });
+
+            totalBox.innerHTML = `<strong>Totale: €${total.toFixed(2)}</strong>`;
+            updateCartHeader(cart);
+        }
+
+        // aggiorna badge contatore header
+        function updateCartHeader(cart) {
+            const count = cart ? cart.reduce((acc, item) => acc + item.quantity, 0) : 0;
+            const cartIcon = document.querySelector(".cart-icon");
+            let badge = cartIcon.querySelector(".cart-count");
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.className = "cart-count";
+                cartIcon.appendChild(badge);
+            }
+            badge.textContent = count;
+        }
+
+        const stripe = Stripe("{{ stripe_public_key }}");
+        const checkoutButton = document.getElementById("checkout-button");
+        const shippingForm = document.getElementById("shipping-form");
+
+        // mostra il form quando si clicca Paga
+        checkoutButton.addEventListener("click", () => {
+            checkoutButton.style.display = "none";
+            shippingForm.style.display = "block";
+        });
+
+        // checkout reale con Stripe
+        document.getElementById("confirm-checkout").addEventListener("click", async () => {
+            const name = document.getElementById("customer-name").value;
+            const email = document.getElementById("customer-email").value;
+            const address = document.getElementById("customer-address").value;
+            const city = document.getElementById("customer-city").value;
+            const zip = document.getElementById("customer-zip").value;
+
+            if (!name || !email || !address || !city || !zip) {
+                alert("Compila tutti i campi di spedizione");
+                return;
+            }
+
+            const cart = await getCart();
+            if (!cart || cart.length === 0) {
+                alert("Il carrello è vuoto");
+                return;
+            }
+
+            const line_items = cart.map(item => ({
+                price_data: {
+                    currency: "eur",
+                    product_data: { name: item.name },
+                    unit_amount: Math.round(item.price * 100),
+                },
+                quantity: item.quantity,
+            }));
+
+            const res = await fetch("/create-checkout-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    line_items: line_items,
+                    customer_name: name,
+                    customer_email: email,
+                    customer_address: address,
+                    customer_city: city,
+                    customer_zip: zip
+                })
+            });
+
+            const data = await res.json();
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            stripe.redirectToCheckout({ sessionId: data.id });
+        });
+
+        renderCart();
+    </script>
+
+</body>
+
+</html>

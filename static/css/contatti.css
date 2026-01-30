@@ -1,0 +1,244 @@
+/* =========================
+   MEGA MENU RESPONSIVE
+========================= */
+.nav-shop {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-shop a {
+    cursor: pointer;
+}
+
+/* Menu nascosto */
+.mega-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    /* versione più sicura per responsive */
+    display: flex;
+    gap: 60px;
+    background: #111;
+    padding: 40px 50px;
+    border: 1px solid #222;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+    z-index: 100;
+}
+
+/* Mostra menu al hover */
+.nav-shop:hover .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Colonne */
+.mega-column {
+    min-width: 180px;
+}
+
+.mega-title {
+    font-size: 1.5em;
+    color: #e10600;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px;
+    text-decoration: none;
+}
+
+.mega-title:hover {
+    color: #ff1a14;
+}
+
+.mega-column a {
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.mega-column a:hover {
+    color: #e10600;
+}
+
+/* =========================
+   CONTATTI
+========================= */
+.contact-section {
+    padding: 80px 60px;
+    text-align: center;
+}
+
+.contact-section h1 {
+    font-size: 36px;
+    margin-bottom: 40px;
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #222;
+    border-radius: 4px;
+    background: #111;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: #777;
+}
+
+.contact-form button {
+    display: inline-block;
+    padding: 15px 35px;
+    border: none;
+    background: #e10600;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.contact-form button:hover {
+    background: #ff1a14;
+}
+
+.flash {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.flash.success {
+    background-color: #218838;
+    color: #fff;
+}
+
+.flash.error {
+    background-color: #c82333;
+    color: #fff;
+}
+
+/* =========================
+   MEDIA QUERIES
+========================= */
+@media screen and (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 30px;
+    }
+
+    nav {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .mega-menu {
+        flex-direction: column;
+        padding: 20px;
+        left: 0;
+        top: 35px;
+        border: none;
+        gap: 20px;
+    }
+
+    .mega-column {
+        min-width: auto;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .categories-grid {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .contact-section {
+        padding: 50px 20px;
+    }
+
+    .contact-section h1 {
+        font-size: 28px;
+    }
+
+    .contact-form button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header {
+        padding: 15px 20px;
+    }
+
+    nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero h1 {
+        font-size: 24px;
+    }
+
+    .categories h2,
+    .products h2 {
+        font-size: 28px;
+    }
+
+    .category-card {
+        height: auto;
+        padding: 20px;
+    }
+
+    .category-card h3 {
+        font-size: 22px;
+    }
+
+    .product-card h3 {
+        font-size: 20px;
+    }
+
+    .mega-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 0;
+    }
+}

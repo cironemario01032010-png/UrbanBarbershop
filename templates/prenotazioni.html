@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazioni Barberia</title>
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: #e10600;
+        }
+
+        nav a {
+            margin-left: 25px;
+            color: #000;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #e10600;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .service,
+        .extra {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .service-header,
+        .extra-header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .quantity-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quantity-controls button {
+            width: 30px;
+            padding: 5px;
+        }
+
+        #booking-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #time-slots button {
+            margin: 5px 5px 5px 0;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #time-slots button.selected {
+            background: #333;
+            color: #fff;
+        }
+
+        #time-slots button.available {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        #time-slots button.unavailable {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        button.confirm {
+            margin-top: 20px;
+            background: #e10600;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.confirm:hover {
+            background: #c20500;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">Urban BARBER<span>SHOP</span></div>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="#">Shop</a>
+            <a href="#">Chi siamo</a>
+            <a href="{{ url_for('contact') }}">Contattaci</a>
+            <a href="{{ url_for('prenotazioni') }}">Prenota ora</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Prenota il tuo servizio</h2>
+
+        <!-- Step 1: Servizio -->
+        <div class="step active" id="step1">
+            <h3>1. Seleziona il servizio</h3>
+            <div class="service" data-id="1" data-price="50" data-duration="40">
+                <div class="service-header">
+                    <span>The Ace Of Fades</span>
+                    <span>50 £ - 40 min</span>
+                </div>
+                <div class="service-details" style="display:none;">
+                    <p>Scissor work + skin fade + eyebrow trimming + hot towel + massage.</p>
+                    <button class="select-service">Seleziona servizio</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Extra -->
+        <div class="step" id="step2">
+            <h3>2. Aggiungi extra (facoltativo)</h3>
+            <div class="extra" data-id="1" data-price="16" data-duration="15">
+                <div class="extra-header">
+                    <span>Brow Threading</span>
+                    <span>16 £ - 15 min</span>
+                </div>
+                <div class="quantity-controls">
+                    <button class="decrease">-</button>
+                    <span class="quantity">0</span>
+                    <button class="increase">+</button>
+                </div>
+            </div>
+
+            <div class="extra" data-id="2" data-price="16" data-duration="15">
+                <div class="extra-header">
+                    <span>Face The Hot Wax</span>
+                    <span>16 £ - 15 min</span>
+                </div>
+                <div class="quantity-controls">
+                    <button class="decrease">-</button>
+                    <span class="quantity">0</span>
+                    <button class="increase">+</button>
+                </div>
+            </div>
+
+            <button class="confirm" id="toStep3">Continua</button>
+        </div>
+
+        <!-- Step 3: Data e ora -->
+        <div class="step" id="step3">
+            <h3>3. Seleziona data e ora</h3>
+            <input type="text" id="calendar" placeholder="Seleziona data">
+            <div id="time-slots"></div>
+            <button class="confirm" id="toStep4">Continua</button>
+        </div>
+
+        <!-- Step 4: Dati cliente -->
+        <div class="step" id="step4">
+            <h3>4. Inserisci i tuoi dati</h3>
+            <label for="name">Nome:</label>
+            <input type="text" id="name" placeholder="Tuo nome" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="tuo@email.com" required>
+            <button class="confirm" id="toStep5">Riepilogo</button>
+        </div>
+
+        <!-- Step 5: Riepilogo -->
+        <div class="step" id="step5">
+            <h3>5. Riepilogo e pagamento</h3>
+            <div id="booking-summary">
+                <p>Servizio: <span id="summary-service">-</span></p>
+                <p>Extras: <span id="summary-extras">-</span></p>
+                <p>Durata totale: <span id="summary-duration">0</span> min</p>
+                <p>Prezzo totale: <span id="summary-price">0</span> £</p>
+                <p>Data e ora: <span id="summary-datetime">-</span></p>
+            </div>
+            <button class="confirm" id="confirm-booking">Conferma e paga</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        let selectedService = null;
+        let extrasSelected = {};
+        let selectedDate = null;
+        let selectedTime = null;
+
+        // Aggiorna riepilogo
+        function updateSummary() {
+            if (!selectedService) return;
+            document.getElementById('summary-service').textContent = selectedService.name;
+
+            let extrasText = Object.keys(extrasSelected)
+                .filter(k => !k.endsWith('_price') && !k.endsWith('_dur') && extrasSelected[k] > 0)
+                .map(k => `${k} x${extrasSelected[k]}`)
+                .join(', ') || '-';
+            document.getElementById('summary-extras').textContent = extrasText;
+
+            let totalDuration = selectedService.duration +
+                Object.keys(extrasSelected)
+                    .filter(k => k.endsWith('_dur'))
+                    .reduce((sum, k) => sum + extrasSelected[k.replace('_dur', '')] * extrasSelected[k], 0);
+
+            let totalPrice = selectedService.price +
+                Object.keys(extrasSelected)
+                    .filter(k => k.endsWith('_price'))
+                    .reduce((sum, k) => sum + extrasSelected[k.replace('_price', '')] * extrasSelected[k], 0);
+
+            document.getElementById('summary-duration').textContent = totalDuration;
+            document.getElementById('summary-price').textContent = totalPrice;
+            document.getElementById('summary-datetime').textContent = selectedDate + ' ' + (selectedTime || '');
+        }
+
+        // Step 1: Servizio
+        document.querySelectorAll('.service-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const details = header.parentElement.querySelector('.service-details');
+                details.style.display = details.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        document.querySelectorAll('.select-service').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const serviceDiv = btn.closest('.service');
+                selectedService = {
+                    id: Number(serviceDiv.dataset.id),
+                    name: serviceDiv.querySelector('.service-header span').textContent,
+                    price: parseFloat(serviceDiv.dataset.price),
+                    duration: parseInt(serviceDiv.dataset.duration)
+                };
+
+                if (isNaN(selectedService.id)) {
+                    alert('Errore: servizio non valido');
+                    return;
+                }
+
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                updateSummary();
+            });
+        });
+
+        // Step 2: Extra
+        document.querySelectorAll('.extra').forEach(extra => {
+            const name = extra.querySelector('.extra-header span').textContent;
+            extrasSelected[name] = 0;
+            extrasSelected[name + '_price'] = parseFloat(extra.dataset.price);
+            extrasSelected[name + '_dur'] = parseInt(extra.dataset.duration);
+            extrasSelected[name + '_id'] = Number(extra.dataset.id);
+
+            extra.querySelector('.increase').addEventListener('click', () => {
+                extrasSelected[name]++;
+                extra.querySelector('.quantity').textContent = extrasSelected[name];
+                updateSummary();
+            });
+            extra.querySelector('.decrease').addEventListener('click', () => {
+                if (extrasSelected[name] > 0) extrasSelected[name]--;
+                extra.querySelector('.quantity').textContent = extrasSelected[name];
+                updateSummary();
+            });
+        });
+
+        document.getElementById('toStep3').addEventListener('click', () => {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+        });
+
+        // Step 3: Calendario + slot disponibili dinamici
+        flatpickr("#calendar", {
+            altInput: true,
+            altFormat: "F j, Y H:i",  // Mostra data e ora
+            dateFormat: "Y-m-d H:i",  // Formato completo per JS
+            minDate: "today",
+            enableTime: true,
+            time_24hr: true,
+            onChange: function (selectedDates, dateStr) {
+                if (!selectedService) {
+                    alert('Seleziona prima un servizio');
+                    return;
+                }
+
+                // Imposta data e ora direttamente da Flatpickr
+                const dateObj = selectedDates[0];
+                selectedDate = dateObj.toISOString().split('T')[0]; // yyyy-mm-dd
+                selectedTime = dateObj.toTimeString().slice(0, 5);  // HH:mm
+
+                updateSummary();
+
+                // Recupero slot disponibili (opzionale)
+                let extrasIds = Object.keys(extrasSelected)
+                    .filter(k => !k.endsWith('_price') && !k.endsWith('_dur') && extrasSelected[k] > 0)
+                    .map(k => extrasSelected[k + '_id']);
+                let query = extrasIds.map(id => `extras[]=${id}`).join('&');
+
+                fetch(`/api/available_slots?service_id=${selectedService.id}&${query}&date=${selectedDate}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const container = document.getElementById('time-slots');
+                        container.innerHTML = '';
+                        if (!data.slots || data.slots.length === 0) {
+                            container.textContent = "Nessuno slot disponibile per questa data";
+                            return;
+                        }
+
+                        data.slots.forEach(slot => {
+                            const btn = document.createElement('button');
+                            btn.textContent = slot;
+                            btn.className = 'available';
+                            btn.addEventListener('click', () => {
+                                selectedTime = slot;
+                                container.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+                                btn.classList.add('selected');
+                                updateSummary();
+                            });
+                            container.appendChild(btn);
+                        });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Errore nel recupero slot disponibili');
+                    });
+            }
+        });
+
+        document.getElementById('toStep4').addEventListener('click', () => {
+            if (!selectedDate || !selectedTime) {
+                alert('Seleziona data e ora');
+                return;
+            }
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step4').classList.add('active');
+        });
+
+        document.getElementById('toStep5').addEventListener('click', () => {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            if (!name || !email) { alert('Inserisci nome e email'); return; }
+            document.getElementById('step4').classList.remove('active');
+            document.getElementById('step5').classList.add('active');
+        });
+
+        // Step 5: Checkout con Stripe
+        document.getElementById('confirm-booking').addEventListener('click', async () => {
+            if (!selectedService || !selectedDate || !selectedTime) {
+                alert('Dati mancanti per la prenotazione');
+                return;
+            }
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const response = await fetch('/api/bookings/checkout', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    service_name: selectedService.name,
+                    service_price: selectedService.price,
+                    service_id: selectedService.id,
+                    booking_date: selectedDate,
+                    booking_time: selectedTime,
+                    customer_name: name,
+                    customer_email: email
+                })
+            });
+            const data = await response.json();
+            if (data.error) { alert(data.error); return; }
+            const stripe = Stripe("{{ stripe_public_key }}");
+            await stripe.redirectToCheckout({ sessionId: data.session_id });
+        });
+    </script>
+
+</body>
+
+</html>

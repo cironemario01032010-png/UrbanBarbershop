@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Shop – Prodotti Professionali</title>
+    <style>
+        /* =========================
+   MEGA MENU RESPONSIVE
+========================= */
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: #e10600;
+        }
+
+        nav a {
+            margin-left: 25px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: #e10600;
+        }
+
+        /* SHOP MEGA MENU */
+        .nav-shop {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav-shop a {
+            cursor: pointer;
+        }
+
+        /* Menu nascosto */
+        .mega-menu {
+            position: absolute;
+            top: 40px;
+            left: -150px;
+            display: flex;
+            gap: 60px;
+            background: #111;
+            padding: 40px 50px;
+            border: 1px solid #222;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            z-index: 100;
+        }
+
+        /* Mostra menu al hover */
+        .nav-shop:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Colonne */
+        .mega-column {
+            min-width: 180px;
+        }
+
+        .mega-title {
+            font-size: 1.5em;
+            color: #e10600;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 15px;
+            text-decoration: none;
+        }
+
+        .mega-title:hover {
+            color: #ff1a14;
+        }
+
+        .mega-column a {
+            display: block;
+            margin-bottom: 10px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .mega-column a:hover {
+            color: #e10600;
+        }
+
+        /* =========================
+   CONTATTI
+========================= */
+        /* CONTATTI - STILE DARK PREMIUM */
+        .contact-section {
+            padding: 80px 60px;
+            background: #000;
+            text-align: center;
+        }
+
+        .contact-section h1 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 40px;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+            background: #111;
+            border: 1px solid #222;
+            padding: 40px;
+            border-radius: 8px;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #ccc;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #222;
+            border-radius: 4px;
+            background: #111;
+            color: #fff;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border 0.3s ease, background 0.3s ease;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #e10600;
+            background: #1a1a1a;
+            outline: none;
+        }
+
+        .contact-form button {
+            display: inline-block;
+            padding: 15px 35px;
+            border: none;
+            background: #e10600;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background: #ff1a14;
+        }
+
+        .flash {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .flash.success {
+            background-color: #218838;
+            color: #fff;
+        }
+
+        .flash.error {
+            background-color: #c82333;
+            color: #fff;
+        }
+
+        /* RESPONSIVE */
+        @media screen and (max-width: 768px) {
+            .contact-section {
+                padding: 50px 20px;
+            }
+
+            .contact-section h1 {
+                font-size: 28px;
+            }
+
+            .contact-form {
+                padding: 20px;
+            }
+
+            .contact-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo"> Urban BARBER<span>SHOP</span></div>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+
+            <div class="nav-shop">
+                <a href="#">Shop</a>
+
+                <div class="mega-menu">
+                    <div class="mega-column">
+                        <a href="{{ url_for('capelli') }}" class="mega-title">Capelli</a>
+                        <a href="#">Pomate</a>
+                        <a href="#">Cere</a>
+                        <a href="#">Shampoo</a>
+                        <a href="#">Trattamenti</a>
+                    </div>
+
+                    <div class="mega-column">
+                        <a href="barba.html" class="mega-title">Barba</a>
+                        <a href="#">Oli da barba</a>
+                        <a href="#">Balsami</a>
+                        <a href="#">Shampoo barba</a>
+                        <a href="#">Accessori</a>
+                    </div>
+
+                    <div class="mega-column">
+                        <a href="skin_care.html" class="mega-title">Skin Care</a>
+                        <a href="#">Detergenti viso</a>
+                        <a href="#">Creme</a>
+                        <a href="#">After shave</a>
+                        <a href="#">Trattamenti</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#">Chi siamo</a>
+            <a href="#">Contattaci</a>
+            <a href="{{ url_for('prenotazioni') }}">Prenota ora</a>
+        </nav>
+        <div class="cart-icon">
+            <img src="https://via.placeholder.com/24" alt="Carrello">
+    </header>
+    <div class="contact-section">
+        <div class="container">
+            <h1>Contattaci</h1>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" placeholder="Il tuo nome" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="La tua email" required>
+
+                <label for="message">Messaggio</label>
+                <textarea id="message" name="message" rows="6" placeholder="Scrivi il tuo messaggio..."
+                    required></textarea>
+
+                <button type="submit">Invia</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

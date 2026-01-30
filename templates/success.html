@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barber Shop – Prodotti Professionali</title>
+  <link rel="stylesheet" href="../static/css/success.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo"> Urban BARBER<span>SHOP</span></div>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+
+      <div class="nav-shop">
+        <a href="#">Shop</a>
+
+        <div class="mega-menu">
+          <div class="mega-column">
+            <a href="{{ url_for('capelli') }}" class="mega-title">Capelli</a>
+            <a href="#">Pomate</a>
+            <a href="#">Cere</a>
+            <a href="#">Shampoo</a>
+            <a href="#">Trattamenti</a>
+          </div>
+
+          <div class="mega-column">
+            <a href="{{ url_for('barba') }}" class="mega-title">Barba</a>
+            <a href="#">Oli da barba</a>
+            <a href="#">Balsami</a>
+            <a href="#">Shampoo barba</a>
+            <a href="#">Accessori</a>
+          </div>
+
+          <div class="mega-column">
+            <a href="{{ url_for('skin_care') }}" class="mega-title">Skin Care</a>
+            <a href="#">Detergenti viso</a>
+            <a href="#">Creme</a>
+            <a href="#">After shave</a>
+            <a href="#">Trattamenti</a>
+          </div>
+        </div>
+      </div>
+
+      <a href="#">Chi siamo</a>
+      <a href="{{ url_for('contact') }}">Contattaci</a>
+      <a href="{{ url_for('prenotazioni') }}">Prenota ora</a>
+    </nav>
+    <div class="cart-icon">
+      <img src="https://via.placeholder.com/24" alt="Carrello">
+  </header>
+
+  <body>
+<div class="success-container">
+
+    <!-- ICONA + MESSAGGIO -->
+    <div class="success-box">
+        <div class="checkmark">✓</div>
+        <h1>Pagamento completato!</h1>
+        <p class="subtitle">
+            Grazie per il tuo acquisto. Il tuo ordine è stato ricevuto correttamente.
+        </p>
+
+        <a href="{{ url_for('home') }}" class="primary-btn">Torna alla Home</a>
+    </div>
+  </body>

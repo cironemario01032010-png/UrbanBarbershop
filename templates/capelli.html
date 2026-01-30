@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodotti Capelli – Barber Shop</title>
+    <link rel="stylesheet" href="../static/css/capelli.css">
+
+    <style>
+        #filter {
+            margin: 20px 0;
+        }
+
+        #filter label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">Urban BARBER<span>SHOP</span></div>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+
+            <div class="nav-shop">
+                <a href="#">Shop</a>
+
+                <div class="mega-menu">
+                    <div class="mega-column">
+                        <a href="{{ url_for('capelli') }}" class="mega-title">Capelli</a>
+                        <a href="#">Pomate</a>
+                        <a href="#">Cere</a>
+                        <a href="#">Shampoo</a>
+                        <a href="#">Trattamenti</a>
+                    </div>
+
+                    <div class="mega-column">
+                        <a href="barba.html" class="mega-title">Barba</a>
+                        <a href="#">Oli da barba</a>
+                        <a href="#">Balsami</a>
+                        <a href="#">Shampoo barba</a>
+                        <a href="#">Accessori</a>
+                    </div>
+
+                    <div class="mega-column">
+                        <a href="skin_care.html" class="mega-title">Skin Care</a>
+                        <a href="#">Detergenti viso</a>
+                        <a href="#">Creme</a>
+                        <a href="#">After shave</a>
+                        <a href="#">Trattamenti</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#">Chi siamo</a>
+            <a href="#">Contattaci</a>
+            <a href="{{ url_for('prenotazioni') }}">Prenota ora</a>
+        </nav>
+
+        <div class="cart-icon">
+            <a href="{{ url_for('carrello') }}" style="text-decoration: none; color: inherit;">
+                🛒 <span id="cart-count">0</span>
+            </a>
+        </div>
+
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Prodotti per capelli</h1>
+        <p>Styling, shampoo e trattamenti professionali per ogni esigenza</p>
+    </section>
+
+    <!-- FILTRO -->
+    <section id="filter">
+        <h3>Filtra per categoria:</h3>
+        <label><input type="checkbox" name="category" value="pomate"> Pomate</label>
+        <label><input type="checkbox" name="category" value="cere"> Cere</label>
+        <label><input type="checkbox" name="category" value="shampoo"> Shampoo</label>
+        <label><input type="checkbox" name="category" value="trattamenti"> Trattamenti</label>
+    </section>
+
+    <!-- PRODOTTI -->
+    <section class="products category-products">
+        <h2>La nostra selezione</h2>
+
+        <div class="product-grid">
+
+            <div class="product-card" data-category="pomate">
+                <img src="https://via.placeholder.com/300x300" alt="Pomata Opaca">
+                <h3>Pomata Opaca</h3>
+                <p>Fissaggio leggero, effetto naturale, ideale per tutti i tipi di capelli.</p>
+                <p class="price">€18</p>
+                <button class="btn-secondary add-to-cart" data-id="1" data-name="Pomata Opaca" data-price="18">
+                    Aggiungi al carrello
+                </button>
+            </div>
+
+            <div class="product-card" data-category="cere">
+                <img src="https://via.placeholder.com/300x300" alt="Cera Modellante">
+                <h3>Cera Modellante</h3>
+                <p>Perfetta per acconciature complesse, texture morbida e flessibile.</p>
+                <p class="price">€20</p>
+                <button class="btn-secondary add-to-cart" data-id="2" data-name="Cera Modellante" data-price="20">
+                    Aggiungi al carrello
+                </button>
+            </div>
+
+            <div class="product-card" data-category="shampoo">
+                <img src="https://via.placeholder.com/300x300" alt="Shampoo Rinforzante">
+                <h3>Shampoo Rinforzante</h3>
+                <p>Rinforza la fibra capillare, dona lucentezza e vitalità ai capelli.</p>
+                <p class="price">€16</p>
+                <button class="btn-secondary add-to-cart" data-id="3" data-name="Shampoo Rinforzante" data-price="16">
+                    Aggiungi al carrello
+                </button>
+            </div>
+
+            <div class="product-card" data-category="trattamenti">
+                <img src="https://via.placeholder.com/300x300" alt="Trattamento Nutriente">
+                <h3>Trattamento Nutriente</h3>
+                <p>Maschera intensiva per capelli secchi o stressati, uso settimanale.</p>
+                <p class="price">€25</p>
+                <button class="btn-secondary add-to-cart" data-id="4" data-name="Trattamento Nutriente" data-price="25">
+                    Aggiungi al carrello
+                </button>
+            </div>
+
+            <div class="product-card" data-category="pomate">
+                <img src="https://via.placeholder.com/300x300" alt="Gel Fissaggio Forte">
+                <h3>Gel Fissaggio Forte</h3>
+                <p>Tenuta estrema tutto il giorno, effetto lucido, ideale per styling definiti.</p>
+                <p class="price">€15</p>
+                <button class="btn-secondary add-to-cart" data-id="5" data-name="Gel Fissaggio Forte" data-price="15">
+                    Aggiungi al carrello
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2026 Barber Shop — Tutti i diritti riservati</p>
+    </footer>
+
+    <!-- SCRIPT FILTRO -->
+    <script>
+        const checkboxes = document.querySelectorAll('input[name="category"]');
+        const products = document.querySelectorAll('.product-card');
+
+        function filterProducts() {
+            const selected = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            products.forEach(p => {
+                const cat = p.dataset.category;
+                p.style.display = selected.length === 0 || selected.includes(cat)
+                    ? 'block'
+                    : 'none';
+            });
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', filterProducts));
+    </script>
+
+    <!-- SCRIPT CARRELLO - SINCRONIZZATO CON SERVER -->
+    <script>
+        const cartButtons = document.querySelectorAll('.add-to-cart');
+
+        // Legge il carrello dal SERVER (non da localStorage!)
+        async function getCartFromServer() {
+            try {
+                const res = await fetch("/api/cart", { credentials: "same-origin" });
+                return await res.json();
+            } catch (error) {
+                console.error("Errore nel leggere il carrello:", error);
+                return [];
+            }
+        }
+
+        // Aggiorna il contatore nel header
+        async function updateCartCount() {
+            const cart = await getCartFromServer();
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+            console.log(`[DEBUG] Carrello aggiornato: ${count} articoli`);
+        }
+
+        // Aggiunge un prodotto al carrello (INVIA AL SERVER)
+        async function addToCart(product) {
+            console.log(`[DEBUG] Aggiungendo al carrello:`, product);
+
+            try {
+                const res = await fetch("/api/cart/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price
+                    })
+                });
+
+                if (!res.ok) {
+                    console.error("Errore nell'aggiungere al carrello:", res.status);
+                    return;
+                }
+
+                const cart = await res.json();
+                console.log(`[DEBUG] Risposta dal server:`, cart);
+
+                // Aggiorna il contatore
+                await updateCartCount();
+
+                // Mostra un messaggio di conferma
+                alert(`${product.name} aggiunto al carrello!`);
+            } catch (error) {
+                console.error("Errore nel fetch:", error);
+            }
+        }
+
+        // Aggiungi event listener a tutti i bottoni
+        cartButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                addToCart({
+                    id: button.dataset.id,
+                    name: button.dataset.name,
+                    price: parseFloat(button.dataset.price)
+                });
+            });
+        });
+
+        // Aggiorna il contatore al caricamento della pagina
+        updateCartCount();
+    </script>
+
+</body>
+
+</html>
